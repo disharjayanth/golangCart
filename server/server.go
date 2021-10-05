@@ -59,6 +59,7 @@ func main() {
 		// Addr: "localhost:3000",
 	}
 
+	http.Handle("/stylesheet/", http.StripPrefix("/stylesheet", http.FileServer(http.Dir("templates/stylesheet/"))))
 	http.HandleFunc("/", cartHandler)
 	http.HandleFunc("/pay", paymentHandler)
 	http.HandleFunc("/orderconfirmed", orderConfirmed)
