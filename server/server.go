@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/disharjayanth/golangCart/data"
@@ -57,8 +58,8 @@ func orderConfirmed(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	server := http.Server{
-		// Addr: ":" + os.Getenv("PORT"),
-		Addr: "localhost:3000",
+		Addr: ":" + os.Getenv("PORT"),
+		// Addr: "localhost:3000",
 	}
 
 	http.Handle("/stylesheet/", http.StripPrefix("/stylesheet", http.FileServer(http.Dir("templates/stylesheet/"))))
