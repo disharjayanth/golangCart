@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"os"
 	"strconv"
 
 	"github.com/disharjayanth/golangCart/data"
@@ -50,13 +49,16 @@ func paymentHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func orderConfirmed(w http.ResponseWriter, r *http.Request) {
-	temp.ExecuteTemplate(w, "orderPlaced.html", nil)
+	orderDetails := data.Order{}
+	orderDetails.Get()
+	fmt.Println("Order details:", orderDetails)
+	temp.ExecuteTemplate(w, "orderPlaced.html", orderDetails)
 }
 
 func main() {
 	server := http.Server{
-		Addr: ":" + os.Getenv("PORT"),
-		// Addr: "localhost:3000",
+		// Addr: ":" + os.Getenv("PORT"),
+		Addr: "localhost:3000",
 	}
 
 	http.Handle("/stylesheet/", http.StripPrefix("/stylesheet", http.FileServer(http.Dir("templates/stylesheet/"))))

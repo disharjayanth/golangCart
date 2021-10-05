@@ -13,3 +13,19 @@ body {
   width: 200px;
   height: 200px;
 }
+
+.order-id {
+  display: flex;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+ul li {
+  list-style: none;
+  font-size: 2rem;
+}
+
+.total-amount {
+  font-size: 1.5rem;
+  font-weight: bold;
+}

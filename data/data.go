@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -39,5 +40,13 @@ func (o *Order) Store() {
 	if err != nil {
 		fmt.Println("Error inserting order:", err)
 		return
+	}
+}
+
+func (o *Order) Get() {
+	filter := bson.D{{"order_id", "1"}}
+	res := collection.FindOne(context.Background(), filter)
+	if err := res.Decode(o); err != nil {
+		fmt.Println("Error retreving order:", err)
 	}
 }

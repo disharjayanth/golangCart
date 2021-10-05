@@ -7,6 +7,15 @@
     <div class="box">
       <h1>Order Placed!</h1>
       <h2>Cash On Delivery</h2>
+      <h3 class="order-id">Order Id:{{ .OrderId }}</h3>
+      {{ range $key, $value := .Items }}
+      <ul>
+        <li><strong>{{ $key }}</strong>: {{ $value }}</li>
+      </ul>
+      {{ end }}
+      <div class="total-amount">
+        <p>Total Amount: {{ .TotalAmount }}</p>
+      </div>
     </div>
   </body>
 </html>
