@@ -4,19 +4,21 @@ import (
 	"crypto/sha512"
 	"fmt"
 	"html/template"
-	"io"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 
 	"github.com/disharjayanth/golangCart/data"
+	"github.com/joho/godotenv"
 )
 
 var temp *template.Template
 var err error
 
 func init() {
+	godotenv.Load()
 	temp, err = template.ParseGlob("templates/*.html")
 	if err != nil {
 		fmt.Println("Error parsing glob of template files:", err)
@@ -73,8 +75,8 @@ func userDetails(w http.ResponseWriter, r *http.Request) {
 		order := data.Order{}
 		order.Get()
 
-		merchant_key := "u2mqR7"
-		salt := "wp7LclP7ie2H1G23cELOHkwqh0GIjFKJ"
+		merchant_key := os.Getenv("MERCHANT_KEY")
+		salt := os.Getenv("SALT")
 		txnid := "s7hhDQVWvbhBdN"
 		amount := "240"
 		productInfo := "phones"
@@ -82,12 +84,10 @@ func userDetails(w http.ResponseWriter, r *http.Request) {
 		email := r.FormValue("email")
 
 		hashString := merchant_key + "|" + txnid + "|" + amount + "|" + productInfo + "|" + firstname + "|" + email + "|||||||||||" + salt
-		fmt.Println("hashString:", hashString)
 
 		sha_512 := sha512.New()
 		sha_512.Write([]byte(hashString))
 		final_key := fmt.Sprintf("%x", sha_512.Sum(nil))
-		// fmt.Println("finalstring sprintf;", final_key)
 
 		params := url.Values{}
 		params.Add("key", merchant_key)
@@ -114,6 +114,7 @@ func userDetails(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			// handle err
 			fmt.Println("could create make request!", err)
+			return
 		}
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
@@ -124,14 +125,13 @@ func userDetails(w http.ResponseWriter, r *http.Request) {
 		}
 		defer resp.Body.Close()
 
-		b, err := io.ReadAll(resp.Body)
-		if err != nil {
-			fmt.Println("Error reading response body:", err)
-			return
-		}
-
-		fmt.Println("Response:", string(b))
-		fmt.Println("Response URL:", resp.Request.URL.String())
+		// b, err := io.ReadAll(resp.Body)
+		// if err != nil {
+		// 	fmt.Println("Error reading response body:", err)
+		// 	return
+		// }
+		// fmt.Println("Response:", string(b))
+		// fmt.Println("Response URL:", resp.Request.URL.String())
 
 		http.Redirect(w, r, resp.Request.URL.String(), http.StatusSeeOther)
 	}

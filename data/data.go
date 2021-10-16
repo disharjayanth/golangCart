@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -21,6 +22,7 @@ type Order struct {
 }
 
 func init() {
+	godotenv.Load()
 	password := os.Getenv("PASS")
 	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb+srv://user:" + password + "@cluster0.8ltsy.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"))
 	if err != nil {
