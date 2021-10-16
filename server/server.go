@@ -69,7 +69,6 @@ func userDetails(w http.ResponseWriter, r *http.Request) {
 		cardExpiryMonth := r.FormValue("cardExpiryMonth")
 		cardExpiryYear := r.FormValue("cardExpiryYear")
 		cardCVV := r.FormValue("cardCVV")
-		// fmt.Println(name, email, phone, cardNumber, cardExpiryMonth, cardExpiryYear, cardCVV)
 
 		order := data.Order{}
 		order.Get()
@@ -88,6 +87,7 @@ func userDetails(w http.ResponseWriter, r *http.Request) {
 		sha_512 := sha512.New()
 		sha_512.Write([]byte(hashString))
 		final_key := fmt.Sprintf("%x", sha_512.Sum(nil))
+		// fmt.Println("finalstring sprintf;", final_key)
 
 		params := url.Values{}
 		params.Add("key", merchant_key)
@@ -96,18 +96,19 @@ func userDetails(w http.ResponseWriter, r *http.Request) {
 		params.Add("firstname", firstname)
 		params.Add("email", email)
 		params.Add("phone", phone)
-		params.Add("productinfo", `Phones`)
+		params.Add("productinfo", productInfo)
 		params.Add("surl", `https://apiplayground-response.herokuapp.com/`)
 		params.Add("furl", `https://apiplayground-response.herokuapp.com/`)
-		params.Add("pg", `cc`)
-		params.Add("bankcode", `cc`)
+		params.Add("pg", `DC`)
+		params.Add("bankcode", `VISA`)
+		params.Add("ccname", "demo")
 		params.Add("ccnum", cardNumber)
 		params.Add("ccexpmon", cardExpiryMonth)
 		params.Add("ccexpyr", cardExpiryYear)
 		params.Add("ccvv", cardCVV)
-		params.Add("ccname", `undefined`)
 		params.Add("txn_s2s_flow", ``)
 		params.Add("hash", final_key)
+
 		body := strings.NewReader(params.Encode())
 		req, err := http.NewRequest("POST", "https://secure.payu.in/_payment", body)
 		if err != nil {
@@ -130,7 +131,9 @@ func userDetails(w http.ResponseWriter, r *http.Request) {
 		}
 
 		fmt.Println("Response:", string(b))
-		w.Write(b)
+		fmt.Println("Response URL:", resp.Request.URL.String())
+
+		http.Redirect(w, r, resp.Request.URL.String(), http.StatusSeeOther)
 	}
 }
 
