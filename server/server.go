@@ -49,7 +49,7 @@ func orderHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Order:", order)
 	}
 
-	// order.Store()
+	order.Store()
 	fmt.Println("Toal:", total)
 	http.Redirect(w, r, "/user", http.StatusSeeOther)
 }
@@ -125,22 +125,20 @@ func userDetails(w http.ResponseWriter, r *http.Request) {
 		}
 		defer resp.Body.Close()
 
-		// b, err := io.ReadAll(resp.Body)
-		// if err != nil {
-		// 	fmt.Println("Error reading response body:", err)
-		// 	return
-		// }
-		// fmt.Println("Response:", string(b))
-		// fmt.Println("Response URL:", resp.Request.URL.String())
-
 		http.Redirect(w, r, resp.Request.URL.String(), http.StatusSeeOther)
 	}
 }
 
 func main() {
-	server := http.Server{
-		// Addr: ":" + os.Getenv("PORT"),
-		Addr: "localhost:3000",
+	var server http.Server
+	if os.Getenv("ENV") == "DEV" {
+		server = http.Server{
+			Addr: "localhost:3000",
+		}
+	} else {
+		server = http.Server{
+			Addr: ":" + os.Getenv("PORT"),
+		}
 	}
 
 	http.Handle("/stylesheet/", http.StripPrefix("/stylesheet", http.FileServer(http.Dir("templates/stylesheet/"))))
@@ -152,82 +150,3 @@ func main() {
 	fmt.Println("Server listening @PORT: 3000")
 	server.ListenAndServe()
 }
-
-// params value for payU
-// params := url.Values{}
-// params.Add("key", `JP***g`)
-// params.Add("amount", strconv.Itoa(order.TotalAmount))
-// params.Add("txnid", `C3nrapLxcTty9R`)
-// params.Add("firstname", name)
-// params.Add("email", email)
-// params.Add("phone", phone)
-// params.Add("productinfo", fmt.Sprintf("%#v", order))
-// params.Add("surl", `https://apiplayground-response.herokuapp.com/`)
-// params.Add("furl", `https://apiplayground-response.herokuapp.com/`)
-// params.Add("pg", `cc`)
-// params.Add("bankcode", `cc`)
-// params.Add("ccnum", cardNumber)
-// params.Add("ccexpmon", cardExpiryMonth)
-// params.Add("ccexpyr", cardExpiryYear)
-// params.Add("ccvv", cardCVV)
-// params.Add("ccname", `undefined`)
-// params.Add("txn_s2s_flow", ``)
-// params.Add("hash", `5acbdf29517ba345f40b38bbea1241c79a8721f33d6b3ee704972095440ec959b7e5b19dd12e106a24ea95773eca484138d096dcac95424c8abc250131eba9f3`)
-// body := strings.NewReader(params.Encode())
-// req, err := http.NewRequest("POST", "https://test.payu.in/_payment -H", body)
-// if err != nil {
-// 	fmt.Println("Error making creating request to payu server: ", err)
-// 	return
-// }
-
-// r.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-// resp, err := http.DefaultClient.Do(req)
-// if err != nil {
-// 	fmt.Println("Error sending request to payu server: ", err)
-// 	return
-// }
-// defer resp.Body.Close()
-
-// // #2
-// params := url.Values{}
-// 		params.Add("key", merchant_key)
-// 		params.Add("amount", amount)
-// 		params.Add("txnid", txnid)
-// 		params.Add("firstname", firstname)
-// 		params.Add("email", email)
-// 		params.Add("phone", phone)
-// 		params.Add("productinfo", `Phones`)
-// 		params.Add("surl", `https://apiplayground-response.herokuapp.com/`)
-// 		params.Add("furl", `https://apiplayground-response.herokuapp.com/`)
-// 		params.Add("pg", `cc`)
-// 		params.Add("bankcode", `cc`)
-// 		params.Add("ccnum", ``)
-// 		params.Add("ccexpmon", ``)
-// 		params.Add("ccexpyr", ``)
-// 		params.Add("ccvv", ``)
-// 		params.Add("ccname", ``)
-// 		params.Add("txn_s2s_flow", ``)
-// 		params.Add("hash", final_key)
-// 		body := strings.NewReader(params.Encode())
-// 		req, err := http.NewRequest("POST", "https://test.payu.in/_payment -H", body)
-// 		if err != nil {
-// 			// handle err
-// 		}
-// 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-// 		resp, err := http.DefaultClient.Do(req)
-// 		if err != nil {
-// 			// handle err
-// 		}
-// 		defer resp.Body.Close()
-
-// 		sb, _ := ioutil.ReadAll(resp.Body)
-// 		w.Write(sb)
-
-// url := fmt.Sprintf("https://test.payu.in/_payment/?key=%s&&txnid=%s&&amount=%s&&productinfo=%s&&firstname=%s&&email=%s&&phone=%s&&lastname=%s&&surl=%s&&furl=%s&&hash=%s&&pg=%s&&bankcode=%s",
-// 	merchant_key, `s7hhDQVWvbhBdN`, strconv.Itoa(order.TotalAmount), "phones", firstname, email, phone, "mike",
-// 	`https://apiplayground-response.herokuapp.com`, `https://apiplayground-response.herokuapp.com`,
-// 	final_key, "cc", "cc")
-
-// fmt.Println("Redirect;", url)
-
-// http.Redirect(w, req, url, http.StatusSeeOther)
